@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Solver 🧮</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#f4f4f4;
+  text-align:center;
+  padding:20px;
+}
+
+h1{
+  color:#333;
+}
+
+input{
+  width:80%;
+  padding:10px;
+  font-size:18px;
+  margin:10px;
+}
+
+button{
+  padding:10px 20px;
+  font-size:18px;
+  background:green;
+  color:white;
+  border:none;
+  border-radius:5px;
+}
+
+#result{
+  margin-top:20px;
+  font-size:20px;
+}
+
+#steps{
+  margin-top:10px;
+  font-size:16px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Math Solver 🧮</h1>
+
+<input type="text" id="input" placeholder="Enter math (e.g. 2+2 or 10% of 500)">
+<br>
+
+<button onclick="solve()">Solve</button>
+
+<div id="result"></div>
+<div id="steps"></div>
+
+<script>
+
+function solve(){
+
+  let input = document.getElementById("input").value;
+  let result = document.getElementById("result");
+  let steps = document.getElementById("steps");
+
+  // percentage case
+  if(input.includes("%")){
+
+    let parts = input.split("of");
+    let percent = parseFloat(parts[0]);
+    let number = parseFloat(parts[1]);
+
+    let answer = (percent/100) * number;
+
+    result.innerHTML = "Answer: " + answer;
+
+    steps.innerHTML =
+    "Step 1: " + percent + "% = " + percent + "/100 <br>" +
+    "Step 2: (" + percent + "/100) × " + number + "<br>" +
+    "Step 3: = " + answer;
+
+  }
+
+  // normal math
+  else{
+    try{
+      let answer = eval(input);
+
+      result.innerHTML = "Answer: " + answer;
+
+      steps.innerHTML =
+      "Step 1: " + input + "<br>" +
+      "Step 2: = " + answer;
+
+    }catch{
+      result.innerHTML = "Invalid Input ❌";
+      steps.innerHTML = "";
+    }
+  }
+
+}
+
+</script>
+
+</body>
+  </html>
