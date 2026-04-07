@@ -12,13 +12,13 @@ body{
 }
 
 #chat{
-  height:90vh;
+  height:85vh;
   overflow-y:auto;
   padding:10px;
 }
 
 .msg{
-  max-width:70%;
+  max-width:75%;
   padding:10px;
   margin:10px;
   border-radius:10px;
@@ -33,25 +33,30 @@ body{
   background:white;
 }
 
-#inputBox{
+#bottom{
   position:fixed;
   bottom:0;
   width:100%;
-  display:flex;
+  background:white;
+  padding:5px;
 }
 
 #input{
-  flex:1;
+  width:60%;
   padding:10px;
-  font-size:16px;
 }
 
 button{
   padding:10px;
+  border:none;
   background:green;
   color:white;
-  border:none;
 }
+
+select{
+  padding:8px;
+}
+
 </style>
 </head>
 
@@ -59,48 +64,75 @@ button{
 
 <div id="chat"></div>
 
-<div id="inputBox">
-  <input id="input" placeholder="Type math...">
-  <button onclick="send()">Send</button>
+<div id="bottom">
+
+<select id="lang">
+  <option value="en">English</option>
+  <option value="bn">Bengali</option>
+  <option value="hi">Hindi</option>
+</select>
+
+<input id="input" placeholder="Type math...">
+
+<input type="file" id="photo">
+
+<button onclick="send()">Send</button>
+
 </div>
 
 <script>
 
 function send(){
 
-  let input = document.getElementById("input").value;
-  document.getElementById("input").value = "";
+  let input = document.getElementById("input").value.trim();
+  let lang = document.getElementById("lang").value;
+
+  if(input==="") return;
 
   addMsg(input,"user");
+  document.getElementById("input").value="";
 
+  // FIX INPUT
   let fixed = input
-    .replace(/x/g,"*")
-    .replace(/X/g,"*")
+    .replace(/x/gi,"*")
     .replace(/÷/g,"/")
-    .replace("of","*");
+    .replace(/of/gi,"*")
+    .replace("%","/100*");
 
   try{
 
-    let answer = eval(fixed);
+    let answer = Function('"use strict";return (' + fixed + ')')();
 
-    let reply =
-    "Answer: " + answer + "<br><br>" +
+    let reply = "";
 
-    "<b>(i) " + input + "</b><br>" +
+    if(lang==="bn"){
+      reply = "উত্তর: " + answer + "<br><br>";
+      reply += "<b>(i) " + input + "</b><br>";
+      reply += "• BODMAS নিয়ম অনুসরণ করা হয়েছে<br>";
+      reply += "• আগে ভাগ, তারপর গুণ, তারপর যোগ/বিয়োগ<br>";
+      reply += "<br>Final Answer: " + answer;
+    }
 
-    "• প্রথমে BODMAS rule follow করা হয়<br>";
+    else if(lang==="hi"){
+      reply = "उत्तर: " + answer + "<br><br>";
+      reply += "<b>(i) " + input + "</b><br>";
+      reply += "• BODMAS नियम लागू किया गया<br>";
+      reply += "• पहले भाग, फिर गुणा, फिर जोड़/घटाव<br>";
+      reply += "<br>Final Answer: " + answer;
+    }
 
-    if(fixed.includes("/")) reply += "• Division করা হয়<br>";
-    if(fixed.includes("*")) reply += "• Multiplication করা হয়<br>";
-    if(fixed.includes("+")) reply += "• Addition করা হয়<br>";
-    if(fixed.includes("-")) reply += "• Subtraction করা হয়<br>";
-
-    reply += "<br>Final Answer: " + answer;
+    else{
+      reply = "Answer: " + answer + "<br><br>";
+      reply += "<b>(i) " + input + "</b><br>";
+      reply += "• BODMAS rule applied<br>";
+      reply += "• Division → Multiplication → Addition/Subtraction<br>";
+      reply += "<br>Final Answer: " + answer;
+    }
 
     addMsg(reply,"bot");
 
   }catch{
-    addMsg("Invalid Input ❌ (Try: 2+2, 5*6, 10% of 500)","bot");
+    addMsg("❌ Invalid Input (Try: 2+2, 5*6, 10% of 500)","bot");
   }
 
 }
@@ -108,9 +140,7 @@ function send(){
 function addMsg(text,type){
 
   let div = document.createElement("div");
-  div.classList.add("msg");
-  div.classList.add(type);
-
+  div.className = "msg " + type;
   div.innerHTML = text;
 
   document.getElementById("chat").appendChild(div);
@@ -122,4 +152,4 @@ function addMsg(text,type){
 </script>
 
 </body>
-</html>
+  </html>
